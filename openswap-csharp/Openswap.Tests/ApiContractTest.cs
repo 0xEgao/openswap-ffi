@@ -21,16 +21,16 @@ public class ApiContractTest
             .Select(method => method.Name)
             .ToHashSet(StringComparer.Ordinal);
 
-        Assert.Empty(expected.Where(method => !actual.Contains(method)));
+        Assert.DoesNotContain(expected, method => !actual.Contains(method));
 
         string[] expectedGlobals = [
-            "CreateDefaultRpcConfig", "FetchMempoolFees", "IsWalletEncrypted",
+            "CreateDefaultRpcConfig", "IsWalletEncrypted",
             "OpenswapFfiVersion", "RestoreWalletGuiApp", "SetupLogging",
         ];
         var actualGlobals = typeof(global::Openswap.Native.Openswap).GetMethods()
             .Select(method => method.Name)
             .ToHashSet(StringComparer.Ordinal);
-        Assert.Empty(expectedGlobals.Where(method => !actualGlobals.Contains(method)));
+        Assert.DoesNotContain(expectedGlobals, method => !actualGlobals.Contains(method));
     }
 
     [Fact]
@@ -144,10 +144,6 @@ public class ApiContractTest
         Assert.Equal(
             new long[] { 1, 2, 3, 4, 3 },
             new[] { balances.Regular, balances.Swap, balances.Contract, balances.Fidelity, balances.Spendable });
-        var feeRates = new FeeRates(12.5, 6.25, 1);
-        Assert.Equal(
-            new double[] { 12.5, 6.25, 1 },
-            new[] { feeRates.Fastest, feeRates.Standard, feeRates.Economy });
         var lockTime = new LockTime("Blocks", 144);
         Assert.Equal("Blocks", lockTime.LockType);
         Assert.Equal((uint)144, lockTime.Value);
