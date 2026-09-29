@@ -231,6 +231,8 @@ impl Taker {
             // `None` keeps the compiled-in default relays; `Some` lets callers
             // (e.g. tests pointing at a local relay) override them.
             nostr_relays: nostr_relays.unwrap_or_else(|| TakerInitConfig::default().nostr_relays),
+            // Optional settings, including LDK connectivity, follow upstream defaults.
+            ..TakerInitConfig::default()
         };
 
         let taker = OpenswapTaker::init(init_config)?;
