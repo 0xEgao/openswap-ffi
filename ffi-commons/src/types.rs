@@ -198,6 +198,9 @@ pub enum TakerError {
     /// Standard input/output error.
     #[error("IO error: {msg}")]
     IO { msg: String },
+    /// No unfinished swap with a persisted swap ID was found to recover.
+    #[error("Nothing to recover")]
+    NothingToRecover,
 }
 
 impl From<OpenswapTakerError> for TakerError {
@@ -241,6 +244,7 @@ impl From<OpenswapTakerError> for TakerError {
             OpenswapTakerError::Watcher(error) => TakerError::Watcher {
                 msg: error.to_string(),
             },
+            OpenswapTakerError::NothingToRecover => TakerError::NothingToRecover,
         }
     }
 }
@@ -1357,6 +1361,7 @@ mod contract_tests {
                 "General error: general",
             ),
             (TakerError::IO { msg: "io".into() }, "IO error: io"),
+            (TakerError::NothingToRecover, "Nothing to recover"),
         ];
 
         for (error, expected) in errors {
@@ -1393,6 +1398,11 @@ mod contract_tests {
         assert!(matches!(
             TakerError::from(OpenswapTakerError::NotEnoughMakersInOfferBook),
             TakerError::NotEnoughMakers { msg } if msg == "not enough eligible makers"
+        ));
+
+        assert!(matches!(
+            TakerError::from(OpenswapTakerError::NothingToRecover),
+            TakerError::NothingToRecover
         ));
     }
 

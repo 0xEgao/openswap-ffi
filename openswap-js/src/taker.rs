@@ -328,7 +328,8 @@ impl Taker {
       check_blocklist,
       password,
       connection_type: ConnectionType::Tor,
-      nostr_relays: TakerInitConfig::default().nostr_relays,
+      // Default relays and optional LDK settings come from Openswap.
+      ..TakerInitConfig::default()
     };
 
     let taker = OpenswapTaker::init(init_config)
